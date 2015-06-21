@@ -9,7 +9,9 @@ void loop() {
     digitalWrite(RF_PIN, HIGH);
     delay(2000);
      
-     digitalWrite(RF_PIN,LOW);
-     delay(i); 
+    digitalWrite(RF_PIN,LOW);
+    delay(i); 
   }
+  
+  delay(4000);
 }
