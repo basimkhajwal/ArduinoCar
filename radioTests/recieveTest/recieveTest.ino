@@ -1,4 +1,7 @@
+#include <VirtualWire.h>
+
 #define LED_OUT 2
+#define RF_PIN 3
 
 const unsigned int upperThreshold = 70;
 const unsigned int lowerThreshold = 50;
@@ -6,20 +9,25 @@ unsigned int readData = 0;
 
 void setup() {
   pinMode(LED_OUT, OUTPUT);
+  digitalWrite(LED_OUT, LOW);
   
-  Serial.begin(9600);
+  vw_set_rx_pin(RF_PIN);
+  vw_setup(500);
+  
+  vw_rx_start();
 }
 
 void loop() {
-  readData = analogRead(A0);
+  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+  uint8_t buf[buflen];
   
-  if (readData > upperThreshold) {
-    digitalWrite(LED_OUT, HIGH);
-    Serial.println(data);
-  }
-  
-  if (readData < lowerThreshold) {
-    digitalWrite(LED_OUT, HIGH);
-    Serial.println(data);
+  if (vw_get_message(buf, &buflen)) {
+    for (int i = 0; i< buflen; i++) {
+      if (buf[i] == '1') {
+        digitalWrite(LED_OUT, HIGH);
+      } else if (buf[i] == '0') {
+        digitalWrite(LED_OUT, LOW);
+      }
+    }
   }
 }
