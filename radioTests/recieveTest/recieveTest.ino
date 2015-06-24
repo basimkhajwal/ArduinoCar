@@ -3,10 +3,6 @@
 #define LED_OUT 2
 #define RF_PIN 3
 
-const unsigned int upperThreshold = 70;
-const unsigned int lowerThreshold = 50;
-unsigned int readData = 0;
-
 void setup() {
   pinMode(LED_OUT, OUTPUT);
   digitalWrite(LED_OUT, LOW);
