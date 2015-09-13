@@ -50,16 +50,10 @@ void setup() {
   vw_rx_start();
 }
 
-void blinkLed() {
-  digitalWrite(13, HIGH);
-  delay(400);
-  digitalWrite(13, LOW);
-}
-
 void parseState() {
   
   boolean disabled = (ENABLE_MASK & state) == 0;
-  int carDirection = disabled ? 0 : (DIRECTION_MASK & state) >> 3;
+  int carDirection = (DIRECTION_MASK & state) >> 3;
   int carSpeed = disabled ? 0 : SPEED_MASK & state;
   
   digitalWrite(LEFT_PIN, LOW);
@@ -97,7 +91,6 @@ void parseState() {
         
       default:
         digitalWrite(FORWARD_PIN, HIGH);
-        blinkLed();
         break;
     
     }
@@ -110,8 +103,6 @@ void loop() {
   uint8_t newState = state;
   
   if (vw_get_message(buf, &buflen)) {
-     blinkLed();
-    
      for (int i = 0; i < buflen; i++) {
        newState = buf[i];
        
