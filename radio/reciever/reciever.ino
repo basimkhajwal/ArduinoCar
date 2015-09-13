@@ -35,7 +35,6 @@ const uint8_t DIRECTION_MASK = 0x38;
 const uint8_t SPEED_MASK = 0x07;
 
 uint8_t state;
-boolean dirty = false;
 
 void setup() {
   pinMode(LEFT_PIN, OUTPUT);
@@ -110,12 +109,7 @@ void loop() {
      
      if (newState != state) {
        state = newState;
-       dirty = true;
+       parseState();
      }
-  }
-  
-  if (dirty) {
-    parseState();
-    dirty = false;
   }
 }
