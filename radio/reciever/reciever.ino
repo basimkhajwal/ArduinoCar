@@ -50,6 +50,12 @@ void setup() {
   vw_rx_start();
 }
 
+void blinkLed() {
+  digitalWrite(13, HIGH);
+  delay(400);
+  digitalWrite(13, LOW);
+}
+
 void parseState() {
   
   boolean disabled = (ENABLE_MASK & state) == 0;
@@ -91,6 +97,7 @@ void parseState() {
         
       default:
         digitalWrite(FORWARD_PIN, HIGH);
+        blinkLed();
         break;
     
     }
@@ -103,13 +110,16 @@ void loop() {
   uint8_t newState = state;
   
   if (vw_get_message(buf, &buflen)) {
-     for (int i = 0; i < buflen && (state & VALID_MASK); i++) {
+     blinkLed();
+    
+     for (int i = 0; i < buflen; i++) {
        newState = buf[i];
-     }
-     
-     if (newState != state) {
-       state = newState;
-       parseState();
+       
+       if (newState & VALID_MASK) {
+         state = newState;
+         parseState();
+         break;
+       }       
      }
   }
 }
