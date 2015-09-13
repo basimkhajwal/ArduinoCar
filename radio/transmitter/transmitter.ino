@@ -50,13 +50,13 @@ void loop() {
     input.toLowerCase();
     
     if (input == "forward") {
-      Serial.write("Moving forward");
+      Serial.write("Moving forward\n");
       sendSignal(&FORWARD);
     } else if (input == "backward") {
-      Serial.write("Moving backward");
+      Serial.write("Moving backward\n");
       sendSignal(&BACK);
     } else {
-      Serial.write("Stopping");
+      Serial.write("Stopping\n");
       sendSignal(&STOP);
     }
   }
