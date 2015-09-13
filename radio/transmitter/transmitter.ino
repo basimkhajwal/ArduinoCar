@@ -28,11 +28,13 @@ const uint8_t ENABLE_MASK = 0x40;
 const uint8_t DIRECTION_MASK = 0x38;
 const uint8_t SPEED_MASK = 0x07;
 
-const uint8_t FORWARD = VALID_MASK | ENABLE_MASK | SPEED_MASK ;
-const uint8_t BACK = VALID_MASK | ENABLE_MASL | SPEED_MASK | 0x28; //Binary 00101000 which is 5 (for the reciever)
-const uint8_t STOP = VALID_MASK;
+uint8_t FORWARD = VALID_MASK | ENABLE_MASK | SPEED_MASK ;
+uint8_t BACK = VALID_MASK | ENABLE_MASK | SPEED_MASK | 0x28; //Binary 00101000 which is 5 (for the reciever)
+uint8_t STOP = VALID_MASK;
 
 void setup() {
+  Serial.begin(9600);
+  
   vw_set_tx_pin(RF_PIN);
   vw_setup(500);
 }
@@ -44,14 +46,15 @@ void sendSignal(uint8_t* signal) {
 void loop() {
   
   if (Serial.available()) {
-    String input = Serial.readStringUntil('\n').toLower();
+    String input = String(Serial.readStringUntil('\n'));
+    input.toLowerCase();
     
     if (input == "forward") {
       Serial.write("Moving forward");
       sendSignal(&FORWARD);
     } else if (input == "backward") {
       Serial.write("Moving backward");
-      sendSignal(&BACKWARD);
+      sendSignal(&BACK);
     } else {
       Serial.write("Stopping");
       sendSignal(&STOP);
