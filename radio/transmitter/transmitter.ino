@@ -48,7 +48,7 @@ void sendSignal(uint8_t* signal) {
   vw_send(signal, 1); 
 }
 
-String validInputs[] = {
+String directions[] = {
   "forward",
   "forward left",
   "forward right",
@@ -68,31 +68,47 @@ void loop() {
     
     /*
     
-    Clever trick to minimize each if statement, each value
-    in the validInputs array corresponds to the index to be
-    shifted across which represents the direction of that
-    string in the reciever
+    The first section checks for a space, if there
+    is none then the code will default to stop the
+    program.
     
-    e.g "forward right" is at index 2 and the direction
-        signal of 2 is needed to be sent
-    
-    If it matches none it defaults to stop
+    Otherwise the input is split into two with the
+    first signifying the direction and the second
+    the speed. (Note. these are not checked and an
+    error could arise with invalid input)
     
     */
     
+    
+    int index = input.indexOf(' ');
     signal = VALID_MASK;
     
-    for (int i = 0; i < 6; i++) {
-      if (input == validInputs[i]) {
-        Serial.println("Moving " + validInputs[i]);
-        signal = NORMAL_MASK | (i << 3); 
+    if (index != -1) {
+      
+      //Extract the direction and the speed
+      String directionString = input.substring(0, index);
+      int givenSpeed = input.substring(index + 1).toInt();
+      givenSpeed %= 7;
+      
+      /*
+      Iterate over each vliad direction and test if the input
+      matches the direction given, then generate a valid signal
+      and terminate the loop
+      */
+      for (int i = 0; i < 6; i++) {
+        if (directionString == directions[i]) {
+          signal = VALID_MASK | ENABLE_MASK | (i << 3) | givenSpeed;
+          break;
+        }
       }
+      
+    }
+   
+    //If no direction was found / no space then stop by default
+    if (signal == VALID_MASK) {
+      Serial.println("Stopping");
     }
     
-    //If no signal was matched default to stop
-    if (signal == VALID_MASK) Serial.println("Stopping");
-    
-    //Send the given signal
     sendSignal(&signal);
   }
   
