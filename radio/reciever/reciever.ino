@@ -63,34 +63,37 @@ void parseState() {
   
   //Later on do PWM for now it is normal on-off no speed
   if (carSpeed != 0) {
+    //Multiply by 32 to make 0-7 into 0-255
+    int convertedSpeed = carSpeed << 5;
+    
     switch (carDirection) {
     
       case 1:
-        digitalWrite(FORWARD_PIN, HIGH);
+        analogWrite(FORWARD_PIN, convertedSpeed);
         digitalWrite(LEFT_PIN, HIGH);
         break;
     
       case 2:
-        digitalWrite(FORWARD_PIN, HIGH);
+        digitalWrite(FORWARD_PIN, convertedSpeed);
         digitalWrite(RIGHT_PIN, HIGH);
         break;
     
       case 3:
-        digitalWrite(BACK_PIN, HIGH);
+        digitalWrite(BACK_PIN, convertedSpeed);
         break;
         
       case 4:
-        digitalWrite(BACK_PIN, HIGH);
+        digitalWrite(BACK_PIN, convertedSpeed);
         digitalWrite(LEFT_PIN, HIGH);
         break;
         
       case 5:
-        digitalWrite(BACK_PIN, HIGH);
+        digitalWrite(BACK_PIN, convertedSpeed);
         digitalWrite(RIGHT_PIN, HIGH);
         break;
         
       default:
-        digitalWrite(FORWARD_PIN, HIGH);
+        digitalWrite(FORWARD_PIN, convertedSpeed);
         break;
     
     }
