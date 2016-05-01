@@ -6,7 +6,7 @@
 #define RIGHT_PIN 5
 
 #define FORWARD_PIN 11
-#define BACK_PIN 10
+#define BACK_PIN 9
 
 /*
 
@@ -45,7 +45,7 @@ void setup() {
   parseState();
   
   vw_set_rx_pin(RF_PIN);
-  vw_setup(500);
+  vw_setup(1000);
   
   vw_rx_start();
 }
@@ -54,7 +54,7 @@ void parseState() {
   
   boolean disabled = (ENABLE_MASK & state) == 0;
   int carDirection = (DIRECTION_MASK & state) >> 3;
-  int carSpeed = disabled ? 0 : SPEED_MASK & state;
+  int carSpeed = disabled ? 0 : (SPEED_MASK & state);
   
   digitalWrite(LEFT_PIN, LOW);
   digitalWrite(RIGHT_PIN, LOW);
@@ -74,26 +74,26 @@ void parseState() {
         break;
     
       case 2:
-        digitalWrite(FORWARD_PIN, convertedSpeed);
+        analogWrite(FORWARD_PIN, convertedSpeed);
         digitalWrite(RIGHT_PIN, HIGH);
         break;
     
       case 3:
-        digitalWrite(BACK_PIN, convertedSpeed);
+        analogWrite(BACK_PIN, convertedSpeed);
         break;
         
       case 4:
-        digitalWrite(BACK_PIN, convertedSpeed);
+        analogWrite(BACK_PIN, convertedSpeed);
         digitalWrite(LEFT_PIN, HIGH);
         break;
         
       case 5:
-        digitalWrite(BACK_PIN, convertedSpeed);
+        analogWrite(BACK_PIN, convertedSpeed);
         digitalWrite(RIGHT_PIN, HIGH);
         break;
         
       default:
-        digitalWrite(FORWARD_PIN, convertedSpeed);
+        analogWrite(FORWARD_PIN, convertedSpeed);
         break;
     
     }
@@ -105,15 +105,10 @@ void loop() {
   uint8_t buf[buflen];
   uint8_t newState = state;
   
-  if (vw_get_message(buf, &buflen)) {
-     for (int i = 0; i < buflen; i++) {
-       newState = buf[i];
-       
-       if (newState & VALID_MASK) {
-         state = newState;
-         parseState();
-         break;
-       }       
+  if (vw_get_message(buf, &buflen)) {   
+     if (buf[0] & VALID_MASK) {
+       state = buf[0];
+       parseState();
      }
   }
 }

@@ -41,7 +41,7 @@ void setup() {
   Serial.begin(9600);
   
   vw_set_tx_pin(RF_PIN);
-  vw_setup(500);
+  vw_setup(1000);
 }
 
 void sendSignal(uint8_t* signal) {
@@ -50,12 +50,12 @@ void sendSignal(uint8_t* signal) {
 
 String directions[] = {
   "forward",
-  "forward left",
-  "forward right",
+  "forward-left",
+  "forward-right",
   
   "backward",
-  "backward left",
-  "backward right"
+  "backward-left",
+  "backward-right"
 };
 
 void loop() {
@@ -97,6 +97,7 @@ void loop() {
       */
       for (int i = 0; i < 6; i++) {
         if (directionString == directions[i]) {
+          Serial.println("Moving " + directions[i] + " at speed " + givenSpeed);
           signal = VALID_MASK | ENABLE_MASK | (i << 3) | givenSpeed;
           break;
         }
